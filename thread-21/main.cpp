@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "main.h"
+//#include "main.h"
 #include <stdio.h>
 #include <pthread.h>
 
@@ -29,7 +29,7 @@ void* solve(void*) {
     int tempTime = 0;
     int number = turn++;
     int startStr = number * numStrOnThread + 1;
-    int endStr = threads > number ? startStr + numStrOnThread : nodes;
+    int endStr = threads - 1 > number ? startStr + numStrOnThread : nodes - 1;
     pthread_barrier_wait(&startBarrier);
     while(tempTime < full_time) {
         for(int j = startStr; j < endStr; j++)
@@ -87,10 +87,13 @@ int main(int argc, char** argv) {
 
     pthread_barrier_init(&startBarrier, NULL, 2);
     pthread_barrier_init(&workBarrier, NULL, threads);
-    pthread_barrier_init(&workBarrier, NULL, threads + 1);
+    pthread_barrier_init(&endBarrier, NULL, threads + 1);
 
     for(int i = 0; i < threads; i++) {
-        pthread_create (tid + i, &pattr, solve, NULL);
+        int ret;
+        if ( ret=pthread_create (tid + i, &pattr, solve, NULL) )
+            perror("pthread_create");
+        fprintf (stderr, "ptid = %d\n", tid[i]);
         pthread_barrier_wait(&startBarrier);
     }
 
@@ -104,6 +107,9 @@ int main(int argc, char** argv) {
         for(int i = 0; i < nodes; i++)
             printf("%f\t", mainMatrix[i][j]);
         printf("\n");
+    }
+
+    for(int j = 0; j < nodes; j++) {
         delete[] mainMatrix[j];
         delete[] tempMatrix[j];
     }
