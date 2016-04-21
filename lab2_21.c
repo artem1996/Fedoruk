@@ -78,7 +78,7 @@ int pthread_barrier_wait(pthread_barrier_t *barrier)
 #define N 2
 #define X 80
 #define Y 100
-#define T 50
+#define T 100
 #define A 0.5
 
 int f( int i, int t)
@@ -114,17 +114,17 @@ void * func(void *arg_p)
 			}
 			else if(It==1)
 			{
-			    //res[It*(X+1)*(Y+1)+i]=0.1*f(i, It)+res[(It-1)*(X+1)*(Y+1)+i];
+			    res[It*(X+30)*(Y-10)+i]=0.1*f(i, It)+res[(It-1)*(X+1)*(Y+1)+i];
 			    
-			    res[It*(X+1)*(Y-40)+i]=0.1*f(i, It)+res[(It-1)*(X+1)*(Y+1)+i];
+			    res[It*(X-20)*(Y-20)+i]=0.1*f(i, It)+res[(It-1)*(X-20)*(Y-20)+i];
 			    
 			    //скорость
 			}
 			else
 			{
-				//res[It*size+i]=0.1*f(i, It)+A*A*((res[(It-1)*size+i+1]-2*res[(It-1)*size+i]+res[(It-1)*size+i-1])+
-				//(res[(It-1)*size+i-X-1]-2*res[(It-1)*size+i]+res[(It-1)*size+i+X+1]))+2*res[(It-1)*size+i]-res[(It-2)*size+i];
-				res[It*size+i]=25*f(i, It)+A*A*((res[(It-1)*size+i+1]-2*res[(It-1)*size+i]+res[(It-1)*size+i-1])+
+				res[It*size+i]=0.1*f(i, It)+A*A*((res[(It-1)*size+i+1]-2*res[(It-1)*size+i]+res[(It-1)*size+i-1])+
+				(res[(It-1)*size+i-X-1]-2*res[(It-1)*size+i]+res[(It-1)*size+i+X+1]))+2*res[(It-1)*size+i]-res[(It-2)*size+i];
+				res[It*size+i]=0.1*f(i, It)+A*A*((res[(It-1)*size+i+1]-2*res[(It-1)*size+i]+res[(It-1)*size+i-1])+
 				(res[(It-1)*size+i-X-1]-2*res[(It-1)*size+i]+res[(It-1)*size+i+X+1]))+2*res[(It-1)*size+i]-res[(It-2)*size+i];
 			}
 		}
@@ -198,5 +198,5 @@ int main()
 	fprintf(f, "pause 0.1\n");
     }
     fclose(f);
-    system("gnuplot com");
+    //system("gnuplot com");
 }
