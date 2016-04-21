@@ -12,13 +12,13 @@ int threads;
 double full_time;
 int nodes;
 double dx, dy;
-int numStrOnThread;
-int turn;
+int tempStr;
+int tempTime = 0;
 double** mainMatrix;
 double** tempMatrix;
 
-pthread_barrier_t startBarrier;
-pthread_barrier_t workBarrier;
+pthread_mutex_t mutex;
+pthread_cond_t cond;
 pthread_barrier_t endBarrier;
 
 double func(double x, double y, double t) {
@@ -26,25 +26,25 @@ double func(double x, double y, double t) {
 }
 
 void* solve(void*) {
-    int tempTime = 0;
-    int number = turn++;
-    int startStr = number * numStrOnThread + 1;
-    int endStr = threads - 1 > number ? startStr + numStrOnThread : nodes - 1;
-    pthread_barrier_wait(&startBarrier);
     while(tempTime < full_time) {
-        for(int j = startStr; j < endStr; j++)
-            for(int i = 1; i < nodes - 1; i++)
-                tempMatrix[i][j] = (SQR_A * ((mainMatrix[i - 1][j] - 2 * mainMatrix[i][j] + mainMatrix[i + 1][j]) / dx +
-                                             (mainMatrix[i][j - 1] - 2 * mainMatrix[i][j] + mainMatrix[i][j + 1]) / dy) + func(i, j, tempTime)) *
-                                   TIME_STEP * TIME_STEP + mainMatrix[i][j];
-        tempTime += TIME_STEP;
-        pthread_barrier_wait(&workBarrier);
-        for(int j = startStr; j < endStr; j++)
-            for(int i = 1; i < nodes - 1; i++)
-                mainMatrix[i][j] = tempMatrix[i][j];
-        pthread_barrier_wait(&workBarrier);
+        do {
+            pthread_mutex_lock(&mutex);
+            if (tempStr < nodes - 1) {
+                int j = tempStr++;
+                pthread_mutex_unlock(&mutex);
+                for (int i = 1; i < nodes - 1; i++)
+                    tempMatrix[i][j] =
+                            (SQR_A * ((mainMatrix[i - 1][j] - 2 * mainMatrix[i][j] + mainMatrix[i + 1][j]) / dx +
+                                      (mainMatrix[i][j - 1] - 2 * mainMatrix[i][j] + mainMatrix[i][j + 1]) /
+                                      dy) + func(i, j, tempTime)) *
+                            TIME_STEP * TIME_STEP + mainMatrix[i][j];
+            } else {
+                pthread_mutex_unlock(&mutex);
+                pthread_barrier_wait(&endBarrier);
+                pthread_barrier_wait(&endBarrier);
+            }
+        } while (tempStr < nodes - 1);
     }
-    pthread_barrier_wait(&endBarrier);
 }
 
 int main(int argc, char** argv) {
@@ -77,7 +77,6 @@ int main(int argc, char** argv) {
     }
     dx = LENGTHX * LENGTHX / (nodes - 1) / (nodes - 1);
     dy = LENGTHY * LENGTHY / (nodes - 1) / (nodes - 1);
-    numStrOnThread = (nodes - 2) / threads + ((nodes - 2) % threads ? 1 : 0);
 
     pthread_t tid[threads];
     pthread_attr_t pattr;
@@ -85,22 +84,31 @@ int main(int argc, char** argv) {
     pthread_attr_setscope (&pattr, PTHREAD_SCOPE_SYSTEM);
     pthread_attr_setdetachstate (&pattr, PTHREAD_CREATE_JOINABLE);
 
-    pthread_barrier_init(&startBarrier, NULL, 2);
-    pthread_barrier_init(&workBarrier, NULL, threads);
+    pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&cond, NULL);
     pthread_barrier_init(&endBarrier, NULL, threads + 1);
 
+    pthread_mutex_lock(&mutex);
     for(int i = 0; i < threads; i++) {
         int ret;
         if ( ret=pthread_create (tid + i, &pattr, solve, NULL) )
             perror("pthread_create");
         fprintf (stderr, "ptid = %d\n", tid[i]);
-        pthread_barrier_wait(&startBarrier);
+    }
+    pthread_mutex_unlock(&mutex);
+
+    while(tempTime < full_time) {
+        pthread_barrier_wait(&endBarrier);
+        for(int i = 1; i < nodes - 1; i++)
+            for(int j = 1; j < nodes - 1; j++)
+                mainMatrix[i][j] = tempMatrix[i][j];
+        tempTime += TIME_STEP;
+        tempStr = 0;
+        pthread_barrier_wait(&endBarrier);
     }
 
-    pthread_barrier_wait(&endBarrier);
-
-    pthread_barrier_destroy(&startBarrier);
-    pthread_barrier_destroy(&workBarrier);
+    pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&cond);
     pthread_barrier_destroy(&endBarrier);
 
     for(int j = 0; j < nodes; j++) {
