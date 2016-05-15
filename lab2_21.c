@@ -198,5 +198,5 @@ int main()
 	fprintf(f, "pause 0.1\n");
     }
     fclose(f);
-    //system("gnuplot com");
+    system("gnuplot com");
 }
