@@ -1,0 +1,17 @@
+module Cell
+{
+	interface PhoneCallback
+	{
+		//accept a message
+		long sendSMS (in string fromNum, in string message);
+		string getNum();
+		void PTTmsg (in string message);
+	};
+
+	interface Station
+	{
+		long register (in PhoneCallback objRef, in string phoneNum);
+		long sendSMS (in string fromNum, in string toNum, in string message);
+		PhoneCallback requirePTT(in string toNum);
+	};
+};
