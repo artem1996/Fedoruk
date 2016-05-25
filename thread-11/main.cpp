@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     double controlValue = VM;
     int k = 0;
     while(tempTime < full_time) {
-        sprintf(buf, "gnu_%d", k);
+        /*sprintf(buf, "gnu_%d", k);
         f=fopen(buf, "w");
         for(int i=0; i< nodes; i++)
         {
@@ -108,14 +108,18 @@ int main(int argc, char** argv) {
             fprintf(f, "10 %f %f\n", i * 10.0 / nodes, mainMatrix[i]);
         }
         fclose(f);
-        k++;
+        k++;*/
 //        if(fabs(mainMatrix[nodes - 2] - controlValue) < TROUBLE) {
 //            printf("Stoped at time = %f\n", tempTime);
 //            tempTime = full_time;
 //        }
         pthread_barrier_wait(&endBarrier);
+        double* temp;
+        temp = mainMatrix;
+        mainMatrix = tempMatrix;
+        tempMatrix = temp;
         tempTime += TIME_STEP;
-        controlValue = mainMatrix[nodes - 2];
+        //controlValue = mainMatrix[nodes - 2];
         pthread_barrier_wait(&endBarrier);
     }
 
@@ -123,13 +127,13 @@ int main(int argc, char** argv) {
     printf( "\nProgram takes %d miliSeconds.\n", (int)(mtime() - start));
     delete[] mainMatrix;
     delete[] tempMatrix;
-    f=fopen("com", "w");
+    /*f=fopen("com", "w");
     for(int i=0; i < k; i++) {
         fprintf(f, "set zrange [0:10]\n");
         fprintf(f, "splot [0:10][0:10]\"gnu_%d\" w l palette\n", i);
        // fprintf(f, "pause %6f \n", TIME_STEP * 10);
     }
     fclose(f);
-    system("gnuplot com");
+    system("gnuplot com");*/
     return 0;
 }
