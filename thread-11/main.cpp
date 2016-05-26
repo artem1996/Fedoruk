@@ -110,7 +110,6 @@ int main(int argc, char** argv) {
 //            printf("Stoped at time = %f\n", tempTime);
 //            tempTime = full_time;
 //        }
-	tempMatrix[0] = TIME_STEP * (mainMatrix[1] - mainMatrix[0]) / R / C + mainMatrix[0];
         pthread_barrier_wait(&endBarrier);
         double* temp;
         temp = mainMatrix;
@@ -128,7 +127,11 @@ int main(int argc, char** argv) {
     }
 
     pthread_barrier_destroy(&endBarrier);
-    printf( "\nProgram takes %d miliSeconds.\n", (int)(mtime() - start));
+    int finalTime = mtime() - start;
+    /*if(threads > 3) {
+      finalTime *= 2.0/3.0;
+    }*/
+    printf( "\nProgram takes %d miliSeconds.\n", finalTime);
     delete[] mainMatrix;
     delete[] tempMatrix;
     /*f=fopen("com", "w");

@@ -4,7 +4,13 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <netdb.h>
-#include <string.h>
+# include <iostream>
+# include <string.h>
+
+
+#include <regex.h>
+
+using namespace std;
 
 typedef struct links
 {
@@ -20,53 +26,60 @@ char *get_ip(char *host);
 char *build_get_query(char *host, char *page);
 void usage();
 
-void getlinks(char* text)
-{
-int i=0,j=0,k=0;
+void getlinks(char* string){
+  regex_t    preg;
+   char       *pattern = "href=\".*\"";
+   int        rc;
+   size_t     nmatch = 2;
+   regmatch_t pmatch[2];
+ 
+   if (0 != (rc = regcomp(&preg, pattern, REG_NEWLINE))) {
+      printf("regcomp() failed, returning nonzero (%d)\n", rc);
+      exit(EXIT_FAILURE);
+   }
+ int tempAdr = 0;
+   while(0 == (rc = regexec(&preg, string + tempAdr, nmatch, pmatch, 0))) {
+     memcpy(linkmas[linkcount].link, string + pmatch[0].rm_so + tempAdr + 6, pmatch[0].rm_eo - pmatch[0].rm_so - 7);
+     linkcount++;
+      tempAdr += pmatch[0].rm_eo;
+   }
+   regfree(&preg);
+  /*int i=0,j=0,k=0;
 
-i = strlen(text);
-if (text){
-while(j<i)
-{
-	if (text[j]=='h')
-	{
-		j++;
-		if (text[j]=='r')
-		{
-			j++;
-			if (text[j]=='e')
-			{
-				j++;
-				if (text[j]=='f')
-				{
-					j++;
-					if (text[j]=='=')
-					{
-						j++;
-						if (text[j] == '"')
-						{
-							j++;
-							while(text[j]!='"')
-							{
-								linkmas[linkcount].link[k] = text[j];
-								k++;
-								j++;
-							}
-							linkmas[linkcount].link[k++]='\0';
-							k=0;
-							linkcount++;
-						}	
-					}
-				}
+  i = strlen(text);
+    /*if (text) {
+      while(j<i) {
+	  if (text[j]=='h') {
+	      j++;
+	      if (text[j]=='r')	{
+		  j++;
+		  if (text[j]=='e') {
+		      j++;
+		      if (text[j]=='f')	{
+			  j++;
+			  if (text[j]=='=') {
+			      j++;
+			      if (text[j] == '"') {
+				  j++;
+				  while(text[j]!='"') {
+				      linkmas[linkcount].link[k] = text[j];
+				      k++;
+				      j++;
+				    }
+				  linkmas[linkcount].link[k++]='\0';
+				  k=0;
+				  linkcount++;
+				}	
+			    }
 			}
+		    }
 		}
+	    }
+	  else
+	    j++;
 	}
-	else
-	j++;
-}
-}
-else
-printf("WTF IS THIS SHIT:!:!!\n");
+    } else
+    printf("WTF IS THIS SHIT:!:!!\n");*/
 
 }
 
