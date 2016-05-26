@@ -35,7 +35,7 @@ session_start();
 	$size=3;
 	
 	
-	$link = mysql_connect("localhost", "rk6stud", "rk6stud")
+	$link = mysql_connect("localhost", "root", "root")
 	or die("Could not connect : " . mysql_error());
 	mysql_select_db("femdb") or die("Could not select database");
 	

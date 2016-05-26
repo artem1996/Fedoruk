@@ -5,6 +5,14 @@
 
 #include <pthread.h>
 #include <errno.h>
+#include <sys/time.h>
+
+long long mtime() {
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    long long mt = (long long)t.tv_sec * 1000 + t.tv_usec / 1000;
+    return mt;
+}
 
 typedef int pthread_barrierattr_t;
 typedef struct
@@ -137,6 +145,7 @@ void * func(void *arg_p)
 int main()
 {
 	FILE *f;
+    long long startTime = mtime();
 	char buf[1024];
 	pthread_t *id;
 	pthread_attr_t pattr;
@@ -190,6 +199,8 @@ int main()
     	//printf("\n\n");
     }
    //rintf("111\n");
+    printf( "\nProgram takes %d miliSeconds.\n", (int)(mtime() - startTime));
+
     f=fopen("com", "w");
     for(k=0; k<T+1; k++)
     {

@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
     double controlValue = VM;
     int k = 0;
     while(tempTime < full_time) {
-        /*sprintf(buf, "gnu_%d", k);
+      /* sprintf(buf, "gnu_%d", k);
         f=fopen(buf, "w");
         for(int i=0; i< nodes; i++)
         {
@@ -110,20 +110,11 @@ int main(int argc, char** argv) {
 //            printf("Stoped at time = %f\n", tempTime);
 //            tempTime = full_time;
 //        }
-	tempMatrix[0] = TIME_STEP * (mainMatrix[1] - mainMatrix[0]) / R / C + mainMatrix[0];
         pthread_barrier_wait(&endBarrier);
-        double* temp;
-        temp = mainMatrix;
-        mainMatrix = tempMatrix;
+	double* temp = mainMatrix;
+	mainMatrix = tempMatrix;
         tempMatrix = temp;
-//=======
-//	mainMatrix[0] = tempMatrix[0];
-//	double* temp = mainMatrix;
-//		mainMatrix = tempMatrix;
-//		tempMatrix = temp;
-//>>>>>>> 57b4fc90977ab8848709576b070bbe680c68fc3e
         tempTime += TIME_STEP;
-        //controlValue = mainMatrix[nodes - 2];
         pthread_barrier_wait(&endBarrier);
     }
 

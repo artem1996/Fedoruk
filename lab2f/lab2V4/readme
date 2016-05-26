@@ -1,0 +1,22 @@
+Используются 2 компа, на одном работает сервер и один из клиентов (трубок), на другом второй клиент.
+
+на все компах предварительно выполняется обработка файла cell.idl
+idlj -fall Cell.idl
+javac Cell/*.java -Xlint
+
+далее компиляция файлов сервера и трубки на соответствующих компах
+
+javac StationServer.java -Xlint
+
+javac Tube.java -Xlint
+
+
+запуск сервера
+orbd -ORBInitialPort 1050 -ORBInitialHost localhost &
+java StationServer -ORBInitialPort 1050 -ORBInitialHost localhost &
+
+
+запуск клиентов-трубок
+java Tube -ORBInitialPort 1050 -ORBInitialHost localhost
+
+где localhost - ip компьютера с сервером
