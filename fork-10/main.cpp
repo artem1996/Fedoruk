@@ -127,25 +127,25 @@ void action(int sig) {
                 gotoxy(curx, cury, ' ');
                 gotoxy(curx, --cury, word);
             }
-            else way = 0;
+            else way = 2;
             break;
         case 2: if(cury < M - 1) {
                 gotoxy(curx, cury, ' ');
                 gotoxy(curx, ++cury, word);
             }
-            else way = 0;
+            else way = 1;
             break;
         case 3: if(curx > 0) {
                 gotoxy(curx, cury, ' ');
                 gotoxy(--curx, cury, word);
             }
-            else way = 0;
+            else way = 4;
             break;
         case 4: if(curx < N - 1) {
                 gotoxy(curx, cury, ' ');
                 gotoxy(++curx, cury, word);
             }
-            else way = 0;
+            else way = 3;
             break;
     }
     alarm(1);
