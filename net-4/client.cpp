@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include <stdio.h>
-
+#include <cstdlib>
 #include <iostream>
 
 using namespace std;
@@ -101,5 +101,3 @@ using namespace std;
 
     return 0;
  }
-
-
