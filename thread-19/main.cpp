@@ -131,13 +131,14 @@ int main(int argc, char** argv) {
     delete[] mainMatrix;
     delete[] tempMatrix;
     delete[] secondTempMatrix;
-    f=fopen("gnu", "w");
+    f=fopen("Gnu", "w");
+    fprintf(f, "set yrange [-15:15]\n");
     for(int i=0; i < k; i++) {
         fprintf(f, "plot \"gnu_%d\" with lines\n", i);
        // fprintf(f, "pause %6f \n", TIME_STEP * 10);
     }
     fclose(f);
-    system("gnuplot gnu");
+    system("gnuplot Gnu");
     system("rm gnu*");
     return 0;
 }
