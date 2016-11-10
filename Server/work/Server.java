@@ -17,7 +17,7 @@ public class Server implements Runnable {
 
     public Server(int socketNum) {
         try {
-            mainSocket = new Socket("195.19.49.48", 1337); //connect to mainServer
+            mainSocket = new Socket("10.20.2.247", 1337); //connect to mainServer
             s = new ServerSocket(socketNum); // open ServerSocket
         } catch (IOException e) {
             e.printStackTrace();
