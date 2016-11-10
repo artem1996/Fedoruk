@@ -28,7 +28,13 @@ public class Client implements Runnable {
                 System.out.println("Enter another client ID:");
                 id = consoleReader.readLine();
                 System.out.println("Enter your message:");
-                message = consoleReader.readLine();
+		String tempMessage = "";
+                while ((tempMessage = consoleReader.readLine())!= null)
+			if (message == "") 
+				message += tempMessage;
+			else
+				message += "\n" + tempMessage;
+		System.out.println(message);
                 printToServer(socket, id, message);
             } catch (Exception e) {
                 System.out.println(e);

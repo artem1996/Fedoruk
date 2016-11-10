@@ -80,10 +80,16 @@ int main(int argc, char** argv) {
     tempMatrix[nodes - 1] = V0;
     secondTempMatrix[nodes - 1] = V0;
     mainMatrix[nodes - 1] = V0;
-    for(int i = 1; i < nodes - 1; i++) {
-        mainMatrix[i] = VM;
-        tempMatrix[i] = VM;
-        secondTempMatrix[i] = VM;
+    double gavno = (VM - V0) * 2.0 / nodes;
+    double tempGavno = V0;
+    for(int i = 1; i < nodes / 2; i++) {
+        mainMatrix[i] = tempGavno;
+        tempMatrix[i] = tempGavno;
+        secondTempMatrix[i] = tempGavno;
+        mainMatrix[nodes - i] = tempGavno;
+        tempMatrix[nodes - i] = tempGavno;
+        secondTempMatrix[nodes - i] = tempGavno;
+        tempGavno += gavno;
     }
 
     dx = LENGTHX * LENGTHX / (nodes - 1) / (nodes - 1);
