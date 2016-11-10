@@ -112,13 +112,13 @@ int main(int argc, char** argv) {
     pthread_barrier_destroy(&forkBarrier);
     int k = 0;
     while(tempTime < full_time) {
-        sprintf(buf, "gnu_%d", k);
+        /*sprintf(buf, "gnu_%d", k);
         f=fopen(buf, "w");
         for(int i=0; i< nodes; i++)
         {
             fprintf(f, "%f\n", mainMatrix[i]);
         }
-        fclose(f);
+        fclose(f);*/
         k++;
         pthread_barrier_wait(&endBarrier);
         //tempMatrix[0] = TIME_STEP * (mainMatrix[1] - mainMatrix[0]) / R / C + mainMatrix[0];
@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     delete[] mainMatrix;
     delete[] tempMatrix;
     delete[] secondTempMatrix;
-    f=fopen("Gnu", "w");
+    /*f=fopen("Gnu", "w");
     fprintf(f, "set yrange [-15:15]\n");
     for(int i=0; i < k; i++) {
         fprintf(f, "plot \"gnu_%d\" with lines\n", i);
@@ -145,6 +145,6 @@ int main(int argc, char** argv) {
     }
     fclose(f);
     system("gnuplot Gnu");
-    system("rm gnu*");
+    system("rm gnu*");*/
     return 0;
 }
