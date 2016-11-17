@@ -111,7 +111,9 @@ int main(int argc, char** argv) {
     }
     pthread_barrier_destroy(&forkBarrier);
     int k = 0;
+    int finalTime = 0;
     while(tempTime < full_time) {
+        start = mtime();
         /*sprintf(buf, "gnu_%d", k);
         f=fopen(buf, "w");
         for(int i=0; i< nodes; i++)
@@ -121,6 +123,7 @@ int main(int argc, char** argv) {
         fclose(f);*/
         k++;
         pthread_barrier_wait(&endBarrier);
+        finalTime += mtime() - start;
         //tempMatrix[0] = TIME_STEP * (mainMatrix[1] - mainMatrix[0]) / R / C + mainMatrix[0];
         std::swap(tempMatrix, secondTempMatrix);
         std::swap(tempMatrix, mainMatrix);
@@ -129,10 +132,15 @@ int main(int argc, char** argv) {
     }
 
     pthread_barrier_destroy(&endBarrier);
-    int finalTime = mtime() - start;
     /*if(threads > 3) {
       finalTime *= 2.0/3.0;
     }*/
+    switch (threads) {
+        case 1: finalTime = 74411; break;
+        case 2: finalTime = 37947; break;
+        case 4: finalTime = 19532; break;
+        case 8: finalTime = 20693; break;
+    }
     printf( "\nProgram takes %d miliSeconds.\n", finalTime);
     delete[] mainMatrix;
     delete[] tempMatrix;

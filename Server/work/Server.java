@@ -87,9 +87,13 @@ public class Server implements Runnable {
         @Override
         public void run() { //listen to tube
             try {
-                String line;
+                String line = "";
                 while (true) {
-                    line = reader.readLine();
+			String tempLine = "";
+			while (!(tempLine = reader.readLine()).isEmpty()) {
+				line += tempLine;
+}
+                    
                     System.out.println(line);
 
                     int targetID = Integer.parseInt(line.split(" to ")[1].split(":")[0]);
