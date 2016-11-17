@@ -17,7 +17,7 @@ public class Server implements Runnable {
 
     public Server(int socketNum) {
         try {
-            mainSocket = new Socket("10.20.2.247", 1337); //connect to mainServer
+            mainSocket = new Socket("127.0.0.1", 1337); //connect to mainServer
             s = new ServerSocket(socketNum); // open ServerSocket
         } catch (IOException e) {
             e.printStackTrace();
@@ -89,12 +89,14 @@ public class Server implements Runnable {
             try {
                 String line = "";
                 while (true) {
-			String tempLine = "";
-			while (!(tempLine = reader.readLine()).isEmpty()) {
-				line += tempLine;
-}
-                    
-                    System.out.println(line);
+        			String tempLine = "";
+        			while (!(tempLine = reader.readLine()).isEmpty() && tempLine.charAt(0)!='\b') {
+        				line += "\n" + tempLine;
+                        //sleep(500);
+                        //System.err.println(line);
+                    }
+                            
+                    System.err.println(line);
 
                     int targetID = Integer.parseInt(line.split(" to ")[1].split(":")[0]);
                     if (tubeMap.containsKey(targetID)) {
@@ -102,6 +104,7 @@ public class Server implements Runnable {
                     } else {
                         sendMessage(line, mainSocket);
                     }
+                    line = "";
                 }
             } catch (IOException e) {
                 e.printStackTrace();
